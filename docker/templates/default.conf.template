@@ -1,0 +1,68 @@
+
+user  ${NGINX_RUN_USER};
+worker_processes  ${NGINX_WORKER_PROCESSES};
+
+# Maximum open file descriptors per process;
+# should be > worker_connections.
+worker_rlimit_nofile ${NGINX_WORKER_RLIMIT_NOFILE};
+
+error_log  /var/log/nginx/error.log warn;
+#pid        /var/run/nginx.pid;
+pid       ${NGINX_PID_FILE};
+
+
+events {
+    worker_connections  ${NGINX_WORKER_CONNECTIONS};
+    multi_accept ${NGINX_MULTI_ACCEPT};
+    use epoll;
+}
+
+
+http {
+
+    server_tokens ${NGINX_SERVER_TOKENS};
+
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile        ${NGINX_SENDFILE};
+    tcp_nopush     ${NGINX_TCP_NOPUSH};
+    tcp_nodelay     ${NGINX_TCP_NODELAY};
+    keepalive_timeout  ${NGINX_KEEPALIVE_TIMEOUT};
+
+
+
+    gzip ${NGINX_GZIP};
+    gzip_http_version  ${NGINX_GZIP_HTTP_VERSION};
+    gzip_comp_level    ${NGINX_GZIP_COMP_LEVEL};
+    gzip_min_length    ${NGINX_GZIP_MIN_LENGTH};
+    gzip_proxied       ${NGINX_GZIP_PROXIED};
+    gzip_vary          ${NGINX_GZIP_VARY};
+    # Compress all output labeled with one of the following MIME-types.
+    gzip_types
+    application/atom+xml
+    application/javascript
+    application/json
+    application/rss+xml
+    application/vnd.ms-fontobject
+    application/x-font-ttf
+    application/x-web-app-manifest+json
+    application/xhtml+xml
+    application/xml
+    font/opentype
+    image/svg+xml
+    image/x-icon
+    text/css
+    text/plain
+    text/x-component;
+  # text/html is always compressed by HttpGzipModule
+
+
+    include /etc/nginx/conf.d/[^d_][^e][^f]*.conf;
+}

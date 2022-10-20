@@ -1,0 +1,37 @@
+server {
+    listen       ${NGINX_LISTEN_PORT};
+    server_name ~^(www\.)?(?<sname>.+?).${VIRTUAL_HOST}$;
+    root /web/$sname/${NGINX_PUB_DIR};
+
+    index index.html index.htm index.php;
+
+    charset utf-8;
+
+    location / {
+        #try_files $uri $uri/ /index.php?$query_string;
+	try_files $uri /index.php$is_args$args;
+    }
+
+
+    access_log /var/log/nginx/$sname-access.log;
+    error_log  /var/log/nginx/$sname-error.log debug;
+
+
+    location ~ ^/index\.php(/|$) {
+	fastcgi_read_timeout 3m;
+        fastcgi_pass ${NGINX_FASTCGI_PASS};
+        fastcgi_buffer_size ${NGINX_FASTCGI_BUFFER_SIZE};
+        fastcgi_buffers ${NGINX_FASTCGI_BUFFERS};
+
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+    }
+
+    location ~ /\.ht {
+        deny  all;
+    }
+}
+
