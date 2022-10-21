@@ -25,7 +25,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          platforms: linux/amd64,linux/arm64,linux/arm32v6,linux/arm32v7 
+          platforms: linux/amd64,linux/arm64,linux/arm 
           tags: ${{ github.repository }}:latest
 
     
