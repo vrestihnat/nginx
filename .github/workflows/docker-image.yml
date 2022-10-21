@@ -2,9 +2,9 @@ name: Docker
 on:
   push:
     branches: ['master']
-env:
+#env:
   # TODO: Change variable to your image's name.
-  IMAGE_ID: vrestihnat/nginx
+  #IMAGE_ID: vrestihnat/nginx
     
 jobs:
   docker:
@@ -21,7 +21,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: $IMAGE_ID:latest
+          tags: ${{ github.repository }}:latest
 
     
 
